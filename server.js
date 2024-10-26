@@ -23,10 +23,11 @@ const procesarCarpeta = async (carpeta, destino) => {
   const nombreCarpeta = path.basename(carpeta).toUpperCase(); // Nombre en mayúsculas
   const archivos = await fs.readdir(carpeta); // Leer los archivos de la carpeta
   
+  
   // Filtrar archivos según su extensión
   const gifs = archivos.filter(archivo => archivo.endsWith('.gif'));
   const imagenPng = archivos.find(archivo => archivo.endsWith('.png'));
-
+  const segundoGifRenombrado = `${nombreCarpeta}_${gifs[1]}`; // Renombra el segundo GIF
   if (gifs.length === 2 && imagenPng) {
     // Crear el objeto Presentar para la base de datos
     const nombreImagen = `${nombreCarpeta}.png`; // Crear el nombre de la imagen basado en la carpeta
@@ -37,14 +38,14 @@ const procesarCarpeta = async (carpeta, destino) => {
       nombre: nombreCarpeta, // Nombre de la carpeta en mayúsculas
       titulos: [
         { titulo: `${nombreCarpeta}1`, video: path.join('datos', gifs[0]) }, // Ruta relativa
-        { titulo: `${nombreCarpeta}2`, video: path.join('datos', gifs[1]) }, // Ruta relativa
+        { titulo: `${nombreCarpeta}2`, video: path.join('datos', segundoGifRenombrado) }, // Ruta relativa
         { titulo: `${nombreCarpeta}3`, video: path.join('datos', nombreImagen) }, // Usar el nuevo nombre
       ],
     };
 
     // Copiar los archivos al destino
     await fs.copy(path.join(carpeta, gifs[0]), path.join(destino, gifs[0]));
-    await fs.copy(path.join(carpeta, gifs[1]), path.join(destino, gifs[1]));
+    await fs.copy(path.join(carpeta, gifs[1]), path.join(destino, segundoGifRenombrado));
     await fs.copy(path.join(carpeta, imagenPng), path.join(destino, nombreImagen));
 
     // Guardar el documento en MongoDB
