@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const juegoSchema = new Schema({
   alumno: {
     type: Schema.Types.ObjectId,
-    ref: 'Alumno',  // Referencia al modelo Alumno
+    ref: 'User',  // Referencia al modelo Alumno
     required: true
   },
   palabra: {
