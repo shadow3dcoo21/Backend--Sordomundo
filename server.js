@@ -16,11 +16,11 @@ const app = express();
 // Configuración CORS para producción
 app.use(cors({
   origin: [
-    'https://sordomundo.pro',   // Tu dominio principal
-    'https://www.sordomundo.pro', // Versión con www
-    'https://tu-frontend-vercel.app', // Si tienes frontend en Vercel
-    'http://localhost:3000', 
-    'https://localhost:3000'
+    'https://sordomundo.pro',             // Tu dominio principal
+    'https://www.sordomundo.pro',         // Versión con www
+    'https://frontend-sordomundo.vercel.app', // Frontend alojado en Vercel
+    'http://localhost:3000',              // Si estás desarrollando localmente (HTTP)
+    'https://localhost:3000'              // Si estás desarrollando localmente (HTTPS)
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
