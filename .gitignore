@@ -1,0 +1,17 @@
+# Excluir archivos y carpetas específicas
+
+# Excluir el archivo de entorno
+.env
+
+# Excluir el archivo de configuración de Nginx
+nginx.conf
+
+# Excluir la carpeta Datos completa
+Datos/
+
+# Excluir script de entrada
+entrypoint.sh
+
+# Excluir Dockerfile y docker-compose
+Dockerfile
+docker-compose.yml
