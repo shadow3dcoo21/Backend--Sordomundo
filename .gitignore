@@ -11,7 +11,7 @@ Datos/
 
 # Excluir script de entrada
 entrypoint.sh
-setup.sh
+setup .sh
 # Excluir Dockerfile y docker-compose
 Dockerfile
 docker-compose.yml

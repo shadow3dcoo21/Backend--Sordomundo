@@ -29,7 +29,8 @@ app.use(cors({
 // Middleware para manejar HTTPS
 app.use((req, res, next) => {
   if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
+    // Esto no es necesario si no estás usando HTTPS directamente
+    // return res.redirect(`https://${req.headers.host}${req.url}`);
   }
   next();
 });
