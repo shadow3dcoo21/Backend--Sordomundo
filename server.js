@@ -17,7 +17,9 @@ app.use(cors({
   origin: [
     'https://tu-dominio-frontend.vercel.app', 
     'http://localhost:3000', 
-    'https://localhost:3000'
+    'https://localhost:3000',
+    'http://localhost:3001', 
+    'https://localhost:3001'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
