@@ -4,39 +4,53 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const contentRoutes = require('./routes/contentRoutes');
-const connectDB = require('./config/db');  // Importar la función de conexión a DB
+const connectDB = require('./config/db');
 const path = require('path');
 
-// Configurar dotenv
 dotenv.config();
 
-// Crear la app de Express
 const app = express();
-// Configuración CORS más flexible
-// Configuración CORS para producción
-app.use(cors({
-  origin: [
-    'https://sordomundo.pro',             // Tu dominio principal
-    'https://www.sordomundo.pro',         // Versión con www
-    'https://frontend-sordomundo-hucx8mjh3-farids-projects-33ebe9be.vercel.app', // Frontend alojado en Vercel
-    'http://localhost:3000',              // Si estás desarrollando localmente (HTTP)
-    'https://localhost:3000'              // Si estás desarrollando localmente (HTTPS)
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
-// Middleware para manejar HTTPS
+// Configuración de CORS más robusta
+const corsOptions = {
+  origin: function (origin, callback) {
+    const whitelist = [
+      'https://sordomundo.pro',
+      'https://www.sordomundo.pro',
+      'https://frontend-sordomundo-hucx8mjh3-farids-projects-33ebe9be.vercel.app', 
+      'https://frontend-sordomundo.vercel.app',
+      'https://localhost:3000'
+    ];
+
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+// Aplicar middleware CORS global
+app.use(cors(corsOptions));
+
+// Manejar preflight requests
+app.options('*', cors(corsOptions));
+
+// Middleware para parsear JSON
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Middleware para añadir headers de CORS adicionales
 app.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
-    // Esto no es necesario si no estás usando HTTPS directamente
-    // return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
-
-app.use(express.json());  // Middleware para parsear JSON
-app.use(express.urlencoded({ extended: true }));
 
 // Ruta de health check
 app.get('/health', (req, res) => {
@@ -46,7 +60,15 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Manejo de errores
+// Rutas
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/content', contentRoutes);
+
+// Configuración del servidor estático
+app.use('/datos', express.static(path.join(__dirname, 'Datos/Bloque')));
+
+// Manejo de errores global
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ 
@@ -55,22 +77,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Definir el puerto
-const PORT = process.env.PORT || 5000;  // Si no está definida en el .env, usa 5000
-
 // Conectar a MongoDB
 connectDB();
 
-// Rutas
-app.use('/api/auth', authRoutes);  // Rutas de autenticación
-app.use('/api/users', userRoutes);  // Rutas de usuarios
-
-//Rutas Presentacion
-// Configuración del servidor estático
-app.use('/datos', express.static(path.join(__dirname, 'Datos/Bloque')));
-app.use('/api/content', contentRoutes);  // Rutas de autenticación
-
-
+// Definir el puerto
+const PORT = process.env.PORT || 5000;
 
 // Iniciar el servidor
 app.listen(PORT, '0.0.0.0', () => {
