@@ -13,13 +13,14 @@ dotenv.config();
 // Crear la app de Express
 const app = express();
 // Configuración CORS más flexible
+// Configuración CORS para producción
 app.use(cors({
   origin: [
-    'https://tu-dominio-frontend.vercel.app', 
+    'https://sordomundo.pro',   // Tu dominio principal
+    'https://www.sordomundo.pro', // Versión con www
+    'https://tu-frontend-vercel.app', // Si tienes frontend en Vercel
     'http://localhost:3000', 
-    'https://localhost:3000',
-    'http://localhost:3001', 
-    'https://localhost:3001'
+    'https://localhost:3000'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -71,6 +72,6 @@ app.use('/api/content', contentRoutes);  // Rutas de autenticación
 
 
 // Iniciar el servidor
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
