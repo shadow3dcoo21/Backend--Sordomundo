@@ -18,8 +18,9 @@ const corsOptions = {
       'https://sordomundo.pro',
       'https://www.sordomundo.pro',
       'https://sordomundo.vercel.app', 
-      'https://frontend-sordomundo.vercel.app',
-      'https://localhost:3000'
+      'http://sordomundo.pro',
+      'https://localhost:3000',
+      'http://localhost:3000',
     ];
 
     if (!origin || whitelist.indexOf(origin) !== -1) {
