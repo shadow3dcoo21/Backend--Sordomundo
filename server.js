@@ -15,22 +15,41 @@ const corsOptions = require('./config/cors/cors');
 // Inicializar la aplicación
 const app = express();
 
-// --- Configuración base ---
-dotenv.config(); // Cargar variables de entorno desde el archivo .env
+// Configuración de CORS más robusta
+const corsOptions = {
+  origin: function (origin, callback) {
+    const whitelist = [
+      'https://sordomundo.pro',
+      'https://www.sordomundo.pro',
+      'https://sordomundo.vercel.app', 
+      'http://sordomundo.pro',
+      'https://localhost:3000',
+      'http://localhost:3000',
+    ];
 
-// --- Conexión a la base de datos ---
-connectDB(); // Conectar a MongoDB
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
 
+// Aplicar middleware CORS global
+app.use(cors(corsOptions));
 
+// Manejar preflight requests
+app.options('*', cors(corsOptions));
 
-// --- Middlewares globales ---
-app.use(cors(corsOptions)); // Habilitar CORS con opciones
-app.options('*', cors(corsOptions)); // Manejar preflight requests
-app.use(express.json()); // Parsear cuerpos JSON
-app.use(express.urlencoded({ extended: true })); // Parsear datos URL-encoded
-app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos
-
-// Middleware para añadir headers CORS adicionales (opcional, ya está incluido en corsOptions)
+// Middleware para parsear JSON
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// Servir archivos estáticos desde la carpeta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+// Middleware para añadir headers de CORS adicionales
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
