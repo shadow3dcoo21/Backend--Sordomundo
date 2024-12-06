@@ -42,7 +42,8 @@ app.options('*', cors(corsOptions));
 // Middleware para parsear JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+// Servir archivos estáticos desde la carpeta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
 // Middleware para añadir headers de CORS adicionales
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
@@ -59,6 +60,55 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString() 
   });
 });
+
+// Ruta de Bienvenida
+app.get('/', (req, res) => {
+  res.status(200).send(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Bienvenida</title>
+      <style>
+        body {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+          font-family: Arial, sans-serif;
+          background-color: #f0f0f0;
+        }
+        h1 {
+          margin: 10px 0;
+        }
+        img {
+          max-width: 200px;
+          height: auto;
+          border-radius: 10px;
+        }
+        a {
+          margin-top: 10px;
+          color: #007BFF;
+          text-decoration: none;
+          font-size: 1.2em;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Bienvenidos a Sordomundo, esto es el Backend ya listo para usarse</h1>
+      <img src="/imagenes/sordomundo.png" alt="Imagen de bienvenida">
+      <a href="https://www.facebook.com/faridgonzalesgonzalo/" target="_blank">Visita mi sitio</a>
+    </body>
+    </html>
+  `);
+});
+
 
 // Rutas
 app.use('/api/auth', authRoutes);
