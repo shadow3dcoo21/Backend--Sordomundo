@@ -17,7 +17,7 @@ const corsOptions = {
     const whitelist = [
       'https://sordomundo.pro',
       'https://www.sordomundo.pro',
-      'https://frontend-sordomundo-hucx8mjh3-farids-projects-33ebe9be.vercel.app', 
+      'https://sordomundo.vercel.app', 
       'https://frontend-sordomundo.vercel.app',
       'https://localhost:3000'
     ];
