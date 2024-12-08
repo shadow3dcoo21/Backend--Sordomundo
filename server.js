@@ -1,51 +1,36 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
+const connectDB = require('./config/db/db');
+
+// Rutas
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const contentRoutes = require('./routes/contentRoutes');
-const connectDB = require('./config/db');
-const path = require('path');
 
-dotenv.config();
+// Configuración de CORS
+const corsOptions = require('./config/cors/cors');
 
+// Inicializar la aplicación
 const app = express();
 
-// Configuración de CORS más robusta
-const corsOptions = {
-  origin: function (origin, callback) {
-    const whitelist = [
-      'https://sordomundo.pro',
-      'https://www.sordomundo.pro',
-      'https://sordomundo.vercel.app', 
-      'http://sordomundo.pro',
-      'https://localhost:3000',
-      'http://localhost:3000',
-    ];
+// --- Configuración base ---
+dotenv.config(); // Cargar variables de entorno desde el archivo .env
 
-    if (!origin || whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('No permitido por CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-};
+// --- Conexión a la base de datos ---
+connectDB(); // Conectar a MongoDB
 
-// Aplicar middleware CORS global
-app.use(cors(corsOptions));
 
-// Manejar preflight requests
-app.options('*', cors(corsOptions));
 
-// Middleware para parsear JSON
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-// Servir archivos estáticos desde la carpeta 'public'
-app.use(express.static(path.join(__dirname, 'public')));
-// Middleware para añadir headers de CORS adicionales
+// --- Middlewares globales ---
+app.use(cors(corsOptions)); // Habilitar CORS con opciones
+app.options('*', cors(corsOptions)); // Manejar preflight requests
+app.use(express.json()); // Parsear cuerpos JSON
+app.use(express.urlencoded({ extended: true })); // Parsear datos URL-encoded
+app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos
+
+// Middleware para añadir headers CORS adicionales (opcional, ya está incluido en corsOptions)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -54,127 +39,30 @@ app.use((req, res, next) => {
   next();
 });
 
-// Ruta de health check
-app.get('/health', (req, res) => {
-  res.status(200).send(`
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Bienvenida</title>
-      <style>
-        body {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          margin: 0;
-          font-family: Arial, sans-serif;
-          background-color: #f0f0f0;
-        }
-        h1 {
-          margin: 10px 0;
-        }
-        img {
-          max-width: 200px;
-          height: auto;
-          border-radius: 10px;
-        }
-        a {
-          margin-top: 10px;
-          color: #007BFF;
-          text-decoration: none;
-          font-size: 1.2em;
-        }
-        a:hover {
-          text-decoration: underline;
-        }
-      </style>
-    </head>
-    <body>
-      <h1>Bienvenidos a Sordomundo, esto es el Backend ya listo para usarse</h1>
-      <img src="/imagenes/sordomundo.png" alt="Imagen de bienvenida">
-      <a href="https://www.facebook.com/faridgonzalesgonzalo/" target="_blank">Visita mi sitio</a>
-    </body>
-    </html>
-  `);
-});
-
-// Ruta de Bienvenida
+// --- Rutas principales ---
 app.get('/', (req, res) => {
-  res.status(200).send(`
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Bienvenida</title>
-      <style>
-        body {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          margin: 0;
-          font-family: Arial, sans-serif;
-          background-color: #f0f0f0;
-        }
-        h1 {
-          margin: 10px 0;
-        }
-        img {
-          max-width: 200px;
-          height: auto;
-          border-radius: 10px;
-        }
-        a {
-          margin-top: 10px;
-          color: #007BFF;
-          text-decoration: none;
-          font-size: 1.2em;
-        }
-        a:hover {
-          text-decoration: underline;
-        }
-      </style>
-    </head>
-    <body>
-      <h1>Bienvenidos a Sordomundo, esto es el Backend ya listo para usarse</h1>
-      <img src="/imagenes/sordomundo.png" alt="Imagen de bienvenida">
-      <a href="https://www.facebook.com/faridgonzalesgonzalo/" target="_blank">Visita mi sitio</a>
-    </body>
-    </html>
-  `);
+  res.status(200).send('Bienvenido a la API');
 });
 
-
-// Rutas
+// Rutas específicas
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/content', contentRoutes);
 
-// Configuración del servidor estático
+// Servir directorios adicionales
 app.use('/datos', express.static(path.join(__dirname, 'Datos/Bloque')));
 
-// Manejo de errores global
+// --- Manejo global de errores ---
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
-    error: 'Algo salió mal', 
-    message: err.message 
+  res.status(500).json({
+    error: 'Algo salió mal',
+    message: err.message,
   });
 });
 
-// Conectar a MongoDB
-connectDB();
-
-// Definir el puerto
+// --- Iniciar el servidor ---
 const PORT = process.env.PORT || 5000;
-
-// Iniciar el servidor
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

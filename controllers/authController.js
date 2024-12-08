@@ -77,6 +77,8 @@ const loginUser = async (req, res) => {
     }
   };
 
+
+  
   // Función para registrar un nuevo usuario
 const registerUser = async (req, res) => {
     const { role, firstName, lastName, sex, username, password, email } = req.body;
