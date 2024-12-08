@@ -1,5 +1,3 @@
-# Excluir archivos y carpetas específicas
-
 # Excluir el archivo de entorno
 .env
 
@@ -11,8 +9,17 @@ Datos/
 
 # Excluir script de entrada
 setup.sh
+
 # Excluir Dockerfile y docker-compose
 Dockerfile
 docker-compose.yml
-#no incluir vercel
-vercel.json
+
+# Archivos de sistema de Windows
+Thumbs.db
+Desktop.ini
+
+# Archivos de sistema de macOS
+.DS_Store
+
+# Ignorar dependencias de Node.js
+node_modules/
