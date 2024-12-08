@@ -65,7 +65,7 @@ const loginUser = async (req, res) => {
         email: user.email,
       };
   
-      // Crear el token JWT
+      // Crear el token JWTT
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
       console.log("token generado",token)
       // Enviar el token
