@@ -66,7 +66,7 @@ const loginUser = async (req, res) => {
       };
   
       // Crear el token JWTT
-      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' });
       console.log("token generado",token)
       // Enviar el token
       return res.json({ token });
