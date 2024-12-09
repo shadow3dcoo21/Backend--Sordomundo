@@ -5,9 +5,9 @@ const path = require('path');
 const connectDB = require('./config/db/db');
 
 // Rutas
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const contentRoutes = require('./routes/contentRoutes');
+const authRoutes = require('./routes/auth/authRoutes');
+const userRoutes = require('./routes/user/userRoutes');
+const contentRoutes = require('./routes/content/contentRoutes');
 
 // Configuración de CORS
 const corsOptions = require('./config/cors/cors');

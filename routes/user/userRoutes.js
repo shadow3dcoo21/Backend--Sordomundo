@@ -1,5 +1,5 @@
 const express = require('express');
-const authMiddleware = require('../middlewares/authMiddleware');
+const authMiddleware = require('../../middlewares/authMiddleware');
 
 console.log(typeof authMiddleware);  // Debe imprimir 'function' si está importado correctamente
 

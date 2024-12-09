@@ -1,7 +1,7 @@
 const express = require('express');
-const authMiddleware = require('../middlewares/authMiddleware');
-const Presentar = require('../models/Presentar');
-const Juego = require('../models/Juego');
+const authMiddleware = require('../../middlewares/authMiddleware');
+const Presentar = require('../../models/Presentar');
+const Juego = require('../../models/Juego');
 console.log("hola",typeof authMiddleware);  // Debe imprimir 'function' si está importado correctamente
 
 const router = express.Router();
